@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import {Text, StyleSheet, ToastAndroid} from 'react-native';
+import {Text, StyleSheet} from 'react-native';
 import firebase from 'firebase';
-import {Card, CardSection, Button, Input} from './common';
+import {Card, CardSection, Button, Input, Spinner} from './common';
 
 class LoginForm extends Component {
   state = {email: '', password: '', error: ''};
