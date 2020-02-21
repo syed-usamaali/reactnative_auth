@@ -1,10 +1,12 @@
 import React, {Component} from 'react';
 import {View} from 'react-native';
 import firebase from 'firebase';
-import {Header} from './components/common';
+import {Header, Button, CardSection, Spinner} from './components/common';
 import LoginForm from './components/LoginForm';
 
 class App extends Component {
+  state = {loggedIn: null, user: null};
+
   componentDidMount() {
     if (!firebase.apps.length) {
       firebase.initializeApp({
@@ -18,13 +20,42 @@ class App extends Component {
         measurementId: 'G-J8GQEBR28W',
       });
     }
+
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.setState({loggedIn: true, user});
+      } else {
+        this.setState({loggedIn: false, user: null});
+      }
+    });
+  }
+
+  renderContent() {
+    switch (this.state.loggedIn) {
+      case true:
+        return (
+          <CardSection>
+            <Button onPress={() => firebase.auth().signOut()}>Log Out</Button>
+          </CardSection>
+        );
+
+      case false:
+        return <LoginForm />;
+
+      default:
+        return <Spinner size="small" />;
+    }
   }
 
   render() {
     return (
       <View>
-        <Header headerText={'Authentication'} />
-        <LoginForm />
+        <Header
+          headerText={
+            this.state.user ? this.state.user.email : 'Authentication'
+          }
+        />
+        {this.renderContent()}
       </View>
     );
   }
